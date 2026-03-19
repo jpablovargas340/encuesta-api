@@ -9,4 +9,4 @@ httpx==0.27.2        # requerido por TestClient de FastAPI para tests async
 
 # Cliente consumidor
 requests==2.32.3
-pandas==2.2.2
+pandas==2.2.3
