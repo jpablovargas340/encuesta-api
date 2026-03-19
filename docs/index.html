@@ -749,6 +749,7 @@
     <li><a href="#modelos">Modelos</a></li>
     <li><a href="#validacion">Validación</a></li>
     <li><a href="#uso">Uso</a></li>
+    <li><a href="#guia">Guía</a></li>
     <li><a href="#arquitectura">Arquitectura</a></li>
   </ul>
   <div class="nav-badge">FASTAPI + PYDANTIC v2</div>
@@ -769,8 +770,8 @@
       Actúa como aduana transaccional — ningún dato inválido contamina el repositorio de análisis.
     </p>
     <div class="hero-actions">
-      <a href="http://127.0.0.1:8000/docs" class="btn btn-primary" target="_blank">▶ Abrir Swagger UI</a>
-      <a href="#endpoints" class="btn btn-secondary">Ver Endpoints →</a>
+      <a href="https://encuesta-api-production-9316.up.railway.app/docs" class="btn btn-primary" target="_blank">▶ Abrir Swagger UI (Producción)</a>
+      <a href="#guia" class="btn btn-secondary">Cómo usarla →</a>
     </div>
 
     <!-- STATS BAR -->
@@ -1172,6 +1173,190 @@
 <span class="c-dim"># ✅ API disponible en http://127.0.0.1:8000</span>
 <span class="c-dim"># 📖 Swagger UI en  http://127.0.0.1:8000/docs</span></div>
     </div>
+  </section>
+
+  <!-- GUÍA PASO A PASO -->
+  <section class="section" id="guia">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2 class="section-title">Guía paso a paso</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p style="color:var(--text-dim); font-size:0.88rem; line-height:1.8; margin-bottom:2rem;">
+      Si nunca has usado una API antes, no te preocupes. Piensa en la API como un <strong style="color:var(--text)">mesero de restaurante</strong>:
+      tú haces un pedido (petición HTTP), el mesero lo lleva a la cocina (servidor), y te trae el resultado (respuesta JSON).
+      Aquí te mostramos exactamente cómo hacer ese pedido.
+    </p>
+
+    <!-- PASO 1 -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--green); color:#000; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">PASO 1</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Abre el Swagger UI</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--green); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:0.8rem;">
+          Swagger UI es la interfaz visual de la API — como un panel de control donde puedes probar cada endpoint sin escribir código.
+          Abre este enlace en tu navegador:
+        </p>
+        <a href="https://encuesta-api-production-9316.up.railway.app/docs" target="_blank"
+           style="display:inline-block; background:var(--green-dim); color:var(--green); border:1px solid var(--green); padding:0.5rem 1rem; border-radius:3px; font-size:0.82rem; text-decoration:none; font-weight:600;">
+          🔗 https://encuesta-api-production-9316.up.railway.app/docs
+        </a>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.8rem;">
+          ✅ <strong style="color:var(--text)">Qué deberías ver:</strong> Una página con el título "API de Gestión de Encuestas Poblacionales" y una lista de endpoints con colores (verde = POST, azul = GET, naranja = PUT, rojo = DELETE).
+        </p>
+      </div>
+    </div>
+
+    <!-- PASO 2 -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--cyan); color:#000; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">PASO 2</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Registra tu primera encuesta (POST)</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--cyan); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:1rem;">
+          El método <strong style="color:var(--green)">POST</strong> sirve para <em>crear</em> datos nuevos. Sigue estos pasos en Swagger:
+        </p>
+        <ol style="font-size:0.82rem; color:var(--text-dim); line-height:2; padding-left:1.2rem;">
+          <li>Haz clic en el bloque verde <strong style="color:var(--green)">POST /encuestas/</strong></li>
+          <li>Haz clic en el botón <strong style="color:var(--text)">"Try it out"</strong> (aparece a la derecha)</li>
+          <li>En el campo <strong style="color:var(--text)">"Request body"</strong> ya hay un ejemplo cargado — puedes usarlo tal cual o modificarlo</li>
+          <li>Haz clic en el botón azul <strong style="color:var(--cyan)">"Execute"</strong></li>
+        </ol>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:1rem;">
+          ✅ <strong style="color:var(--text)">Qué deberías ver:</strong> En "Server response", un código <strong style="color:var(--green)">201</strong> y un JSON con el campo <code style="color:var(--cyan)">"id"</code> — ese es el identificador único de la encuesta que acabas de crear. <strong style="color:var(--amber)">Cópialo</strong>, lo vas a necesitar en los siguientes pasos.
+        </p>
+        <p style="font-size:0.8rem; color:var(--red); margin-top:0.5rem;">
+          ❌ <strong>Si ves código 422:</strong> Algún dato no pasó la validación. Mira el campo "errores" en la respuesta — te dice exactamente qué campo está mal y por qué.
+        </p>
+      </div>
+    </div>
+
+    <!-- PASO 3 -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--cyan); color:#000; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">PASO 3</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Consulta la lista de encuestas (GET)</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--cyan); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:1rem;">
+          El método <strong style="color:var(--cyan)">GET</strong> sirve para <em>leer</em> datos sin modificarlos. Es como consultar sin alterar nada.
+        </p>
+        <ol style="font-size:0.82rem; color:var(--text-dim); line-height:2; padding-left:1.2rem;">
+          <li>Haz clic en el bloque azul <strong style="color:var(--cyan)">GET /encuestas/</strong></li>
+          <li>Haz clic en <strong style="color:var(--text)">"Try it out"</strong> → <strong style="color:var(--cyan)">"Execute"</strong></li>
+        </ol>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:1rem;">
+          ✅ <strong style="color:var(--text)">Qué deberías ver:</strong> Un JSON con <code style="color:var(--cyan)">"total": 1</code> y la lista de encuestas registradas. Cada vez que hagas un POST, el total aumenta.
+        </p>
+      </div>
+    </div>
+
+    <!-- PASO 4 -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--cyan); color:#000; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">PASO 4</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Busca una encuesta por ID (GET /{id})</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--cyan); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:1rem;">
+          Aquí usas el ID que copiaste en el Paso 2.
+        </p>
+        <ol style="font-size:0.82rem; color:var(--text-dim); line-height:2; padding-left:1.2rem;">
+          <li>Haz clic en <strong style="color:var(--cyan)">GET /encuestas/{encuesta_id}</strong></li>
+          <li>Haz clic en <strong style="color:var(--text)">"Try it out"</strong></li>
+          <li>En el campo <strong style="color:var(--text)">"encuesta_id"</strong> pega el ID que copiaste</li>
+          <li>Haz clic en <strong style="color:var(--cyan)">"Execute"</strong></li>
+        </ol>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:1rem;">
+          ✅ <strong style="color:var(--text)">Código 200:</strong> Encontró la encuesta y te la devuelve completa.<br>
+          ❌ <strong style="color:var(--red)">Código 404:</strong> No encontró ninguna encuesta con ese ID. Verifica que copiaste bien el ID.
+        </p>
+      </div>
+    </div>
+
+    <!-- PASO 5 -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--amber); color:#000; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">PASO 5</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Ver las estadísticas (GET /estadisticas/)</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--amber); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:1rem;">
+          Este endpoint es especial — calcula estadísticas en tiempo real sobre todas las encuestas registradas.
+        </p>
+        <ol style="font-size:0.82rem; color:var(--text-dim); line-height:2; padding-left:1.2rem;">
+          <li>Haz clic en <strong style="color:var(--cyan)">GET /encuestas/estadisticas/</strong></li>
+          <li>Haz clic en <strong style="color:var(--text)">"Try it out"</strong> → <strong style="color:var(--cyan)">"Execute"</strong></li>
+        </ol>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:1rem;">
+          ✅ <strong style="color:var(--text)">Qué deberías ver:</strong> Promedio de edad, edad mínima y máxima, distribución por estrato y por departamento de todas las encuestas en el sistema.
+        </p>
+      </div>
+    </div>
+
+    <!-- PASO 6 -->
+    <div style="margin-bottom:2rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--red); color:#fff; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">PASO 6</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Elimina una encuesta (DELETE)</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--red); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:1rem;">
+          El método <strong style="color:var(--red)">DELETE</strong> elimina permanentemente un registro.
+        </p>
+        <ol style="font-size:0.82rem; color:var(--text-dim); line-height:2; padding-left:1.2rem;">
+          <li>Haz clic en <strong style="color:var(--red)">DELETE /encuestas/{encuesta_id}</strong></li>
+          <li>Haz clic en <strong style="color:var(--text)">"Try it out"</strong></li>
+          <li>Pega el ID de la encuesta a eliminar</li>
+          <li>Haz clic en <strong style="color:var(--cyan)">"Execute"</strong></li>
+        </ol>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:1rem;">
+          ✅ <strong style="color:var(--text)">Código 204:</strong> Eliminada exitosamente. No retorna ningún contenido — eso es intencional, el estándar HTTP dice que 204 no tiene body.<br>
+          ❌ <strong style="color:var(--red)">Código 404:</strong> Ya no existe o el ID es incorrecto.
+        </p>
+      </div>
+    </div>
+
+    <!-- PRUEBA EL 422 -->
+    <div style="margin-bottom:1rem;">
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div style="background:var(--purple); color:#000; font-weight:700; font-size:0.8rem; padding:0.3rem 0.8rem; border-radius:2px; flex-shrink:0;">BONUS</div>
+        <div style="font-family:var(--sans); font-weight:700; font-size:1.1rem;">Prueba el validador — envía datos inválidos a propósito</div>
+      </div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--purple); border-radius:0 4px 4px 0; padding:1.2rem 1.5rem;">
+        <p style="font-size:0.85rem; color:var(--text-dim); line-height:1.8; margin-bottom:1rem;">
+          Prueba que la validación funciona enviando datos incorrectos en el POST. Copia este payload en el "Request body":
+        </p>
+        <div class="code-block" style="margin:0">
+          <div class="code-header">
+            <span class="code-lang">JSON — payload inválido a propósito</span>
+            <div class="code-dots"><span></span><span></span><span></span></div>
+          </div>
+          <div class="code-body">{
+  "encuestado": {
+    "nombre": "Ana",
+    "edad": <span class="c-red">999</span>,
+    "estrato": <span class="c-red">9</span>,
+    "departamento": <span class="c-red">"Texas"</span>
+  },
+  "respuestas": [{
+    "pregunta_id": 1,
+    "pregunta_texto": "Test",
+    "respuesta": <span class="c-red">10</span>,
+    "tipo": "likert"
+  }]
+}</div>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-dim); margin-top:1rem;">
+          ✅ <strong style="color:var(--text)">Qué deberías ver:</strong> Código <strong style="color:var(--red)">422</strong> con un JSON que lista exactamente cuántos errores hubo y en qué campo está cada uno. Así funciona la "aduana transaccional" del sistema.
+        </p>
+      </div>
+    </div>
+
   </section>
 
 </div>
