@@ -6,6 +6,8 @@
 import time
 import logging
 import functools
+import pickle
+import base64
 from datetime import datetime
 from typing import Any
 from uuid import uuid4
@@ -299,3 +301,75 @@ async def eliminar_encuesta(encuesta_id: str):
     # Retornamos Response vacía explícita para garantizar que FastAPI no intente
     # serializar ningún valor y respete el status code 204 correctamente.
     return Response(status_code=204)
+
+
+# ── GET /encuestas/exportar/{formato} ────────────────────────────
+# BONUS: Serialización JSON vs Pickle
+# ─────────────────────────────────────────────────────────────────
+# JSON:   formato de texto universal, legible por humanos y cualquier lenguaje.
+#         Interoperable, pero solo soporta tipos básicos (str, int, float, list, dict).
+#
+# Pickle: formato binario exclusivo de Python. Soporta tipos complejos (clases,
+#         funciones, objetos). MÁS rápido y compacto, pero NO seguro para datos
+#         de fuentes externas (puede ejecutar código arbitrario al deserializar).
+#
+# Regla de oro: JSON para intercambio entre sistemas, Pickle para caché interno Python.
+# ─────────────────────────────────────────────────────────────────
+@app.get(
+    "/encuestas/exportar/{formato}",
+    status_code=200,
+    summary="Exportar encuestas en JSON o Pickle",
+    description=(
+        "Exporta todas las encuestas en el formato solicitado.\n\n"
+        "**JSON**: texto universal, legible, interoperable entre lenguajes.\n\n"
+        "**Pickle**: binario exclusivo de Python, más compacto y rápido, "
+        "pero NO seguro para deserializar datos externos. "
+        "Se retorna codificado en Base64 para transportarlo como texto en JSON."
+    ),
+    tags=["Exportación"],
+)
+@log_request
+async def exportar_encuestas(formato: str):
+    if formato not in ("json", "pickle"):
+        raise HTTPException(
+            status_code=400,
+            detail="Formato no soportado. Use 'json' o 'pickle'."
+        )
+
+    datos = list(db.values())
+
+    if formato == "json":
+        # JSON: serialización nativa de Python, legible por cualquier sistema
+        datos_serializados = datos  # FastAPI ya convierte dicts a JSON
+        tamanio_bytes = len(str(datos_serializados).encode("utf-8"))
+        return {
+            "formato": "JSON",
+            "descripcion": "Formato de texto universal. Legible por humanos y cualquier lenguaje.",
+            "seguro_para_deserializar": True,
+            "tamanio_aprox_bytes": tamanio_bytes,
+            "total_registros": len(datos),
+            "datos": datos_serializados,
+        }
+
+    else:
+        # Pickle: serialización binaria de Python
+        # base64 convierte los bytes binarios a texto para poder incluirlos en JSON
+        pickle_bytes = pickle.dumps(datos)
+        datos_b64 = base64.b64encode(pickle_bytes).decode("utf-8")
+        return {
+            "formato": "Pickle (Base64)",
+            "descripcion": (
+                "Formato binario exclusivo de Python. "
+                "MÁS compacto que JSON pero NO interoperable. "
+                "NUNCA deserializar datos pickle de fuentes no confiables."
+            ),
+            "seguro_para_deserializar": False,
+            "advertencia": "Solo usar pickle para caché interno entre procesos Python confiables.",
+            "tamanio_bytes_pickle": len(pickle_bytes),
+            "total_registros": len(datos),
+            "datos_base64": datos_b64,
+            "como_deserializar": (
+                "import pickle, base64; "
+                "pickle.loads(base64.b64decode(datos_base64))"
+            ),
+        }

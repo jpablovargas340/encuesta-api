@@ -1,0 +1,11 @@
+nombre,edad,estrato,departamento,genero,pregunta_id,pregunta_texto,respuesta,tipo
+Laura Gómez,28,3,Antioquia,Femenino,1,¿Satisfacción con servicios públicos?,4,likert
+Carlos Pérez,45,2,Cundinamarca,Masculino,1,¿Satisfacción con servicios públicos?,2,likert
+María Torres,33,4,Valle del Cauca,Femenino,1,¿Satisfacción con servicios públicos?,5,likert
+Andrés Ríos,22,1,Bolívar,Masculino,1,¿Satisfacción con servicios públicos?,1,likert
+Sofía Castro,55,5,Santander,Femenino,1,¿Satisfacción con servicios públicos?,3,likert
+Diego Vargas,38,3,Nariño,Masculino,1,¿Satisfacción con servicios públicos?,4,likert
+Valentina Cruz,29,2,Córdoba,Femenino,1,¿Satisfacción con servicios públicos?,3,likert
+Julián Mora,61,6,Meta,Masculino,1,¿Satisfacción con servicios públicos?,5,likert
+Camila Díaz,19,1,Cauca,Femenino,1,¿Satisfacción con servicios públicos?,2,likert
+Pablo Herrera,42,4,Huila,Masculino,1,¿Satisfacción con servicios públicos?,4,likert

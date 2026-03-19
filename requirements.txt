@@ -1,3 +1,12 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.6
-pydantic==2.8.2
+# API
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+pydantic==2.10.6
+
+# Tests
+pytest==8.3.2
+httpx==0.27.2
+
+# requests y pandas solo se usan en cliente.py (instalar localmente)
+# requests==2.32.3
+# pandas==2.2.3
