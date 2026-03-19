@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Encuesta API — Docs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #080c10;
+      --bg2:       #0d1117;
+      --bg3:       #111820;
+      --border:    #1e2d3d;
+      --green:     #00ff88;
+      --green-dim: #00ff8844;
+      --cyan:      #00d4ff;
+      --cyan-dim:  #00d4ff22;
+      --amber:     #ffb347;
+      --red:       #ff5f5f;
+      --purple:    #b388ff;
+      --text:      #c9d1d9;
+      --text-dim:  #6e7a8a;
+      --mono:      'JetBrains Mono', monospace;
+      --sans:      'Syne', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ── CANVAS PARTICLES ── */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8,12,16,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: var(--sans);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--green);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-logo span { color: var(--text-dim); font-weight: 400; font-size: 0.85rem; }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--cyan); }
+
+    .nav-badge {
+      background: var(--green-dim);
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.2rem 0.7rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 8rem 0 5rem;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--cyan);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+
+    .hero-tag::before {
+      content: '';
+      width: 2rem;
+      height: 1px;
+      background: var(--cyan);
+    }
+
+    .hero h1 {
+      font-family: var(--sans);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.35s forwards;
+    }
+
+    .hero h1 .accent { color: var(--green); }
+    .hero h1 .accent2 { color: var(--cyan); }
+
+    .hero-desc {
+      font-family: var(--sans);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text-dim);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.5s forwards;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.65s forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 3px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #00ffaa;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--green-dim);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+    }
+
+    .btn-secondary:hover {
+      background: var(--cyan-dim);
+      transform: translateY(-2px);
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin: 4rem 0;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.8s forwards;
+    }
+
+    .stat {
+      background: var(--bg2);
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .stat-value {
+      font-family: var(--sans);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section { padding: 4rem 0; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-num {
+      font-size: 0.7rem;
+      color: var(--green);
+      letter-spacing: 0.15em;
+      border: 1px solid var(--green);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+    }
+
+    .section-title {
+      font-family: var(--sans);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* ── ENDPOINTS TABLE ── */
+    .endpoints-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .endpoint-row {
+      background: var(--bg2);
+      display: grid;
+      grid-template-columns: 90px 1fr 1fr 80px;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      gap: 1rem;
+      transition: background 0.15s;
+      cursor: pointer;
+    }
+
+    .endpoint-row:hover { background: var(--bg3); }
+
+    .endpoint-row.header {
+      background: var(--bg);
+      cursor: default;
+      padding: 0.6rem 1.5rem;
+    }
+
+    .endpoint-row.header span {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .method {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 3px;
+      text-align: center;
+      letter-spacing: 0.05em;
+      width: fit-content;
+    }
+
+    .method.post { background: #003d1f; color: var(--green); border: 1px solid var(--green); }
+    .method.get  { background: #001a2e; color: var(--cyan);  border: 1px solid var(--cyan); }
+    .method.put  { background: #2e1a00; color: var(--amber); border: 1px solid var(--amber); }
+    .method.delete { background: #2e0000; color: var(--red); border: 1px solid var(--red); }
+
+    .endpoint-path {
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    .endpoint-path em {
+      color: var(--purple);
+      font-style: normal;
+    }
+
+    .endpoint-desc {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .status-code {
+      font-size: 0.78rem;
+      color: var(--green);
+      text-align: right;
+    }
+
+    .status-code.s404 { color: var(--red); }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 1.5rem 0;
+    }
+
+    .code-header {
+      background: var(--bg);
+      padding: 0.6rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-lang {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .code-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .code-dots span:nth-child(1) { background: var(--red); }
+    .code-dots span:nth-child(2) { background: var(--amber); }
+    .code-dots span:nth-child(3) { background: var(--green); }
+
+    .code-body {
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .c-green  { color: var(--green); }
+    .c-cyan   { color: var(--cyan); }
+    .c-amber  { color: var(--amber); }
+    .c-purple { color: var(--purple); }
+    .c-red    { color: var(--red); }
+    .c-dim    { color: var(--text-dim); }
+    .c-text   { color: var(--text); }
+
+    /* ── PIPELINE DIAGRAM ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 2rem 0;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .pipe-node {
+      flex-shrink: 0;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.2rem 1.5rem;
+      text-align: center;
+      min-width: 130px;
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .pipe-node:hover {
+      border-color: var(--green);
+      transform: translateY(-3px);
+    }
+
+    .pipe-node-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .pipe-node-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .pipe-node-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .pipe-arrow {
+      flex-shrink: 0;
+      padding: 0 0.5rem;
+      color: var(--border);
+      font-size: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .pipe-arrow-label {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── MODELS GRID ── */
+    .models-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .model-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .model-card:hover {
+      border-color: var(--purple);
+      transform: translateY(-3px);
+    }
+
+    .model-card-title {
+      font-family: var(--sans);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--purple);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .model-field {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+      gap: 1rem;
+    }
+
+    .model-field:last-child { border-bottom: none; }
+
+    .field-name { color: var(--cyan); }
+    .field-type { color: var(--amber); font-size: 0.72rem; }
+    .field-badge {
+      font-size: 0.6rem;
+      padding: 0.1rem 0.4rem;
+      border-radius: 2px;
+      letter-spacing: 0.05em;
+    }
+    .badge-req  { background: #2e0a00; color: var(--red); }
+    .badge-opt  { background: #001a2e; color: var(--cyan); }
+    .badge-val  { background: #003d1f; color: var(--green); }
+
+    /* ── VALIDATION RULES ── */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .rule-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--green);
+      border-radius: 0 4px 4px 0;
+      padding: 1.2rem 1.5rem;
+    }
+
+    .rule-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--green);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .rule-desc {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .rule-range {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      font-size: 0.72rem;
+      color: var(--amber);
+    }
+
+    /* ── ERROR SECTION ── */
+    .error-example {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .error-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.8rem;
+      margin-bottom: -1px;
+      border-radius: 3px 3px 0 0;
+      display: inline-block;
+    }
+
+    .label-bad  { background: #2e0000; color: var(--red); }
+    .label-good { background: #003d1f; color: var(--green); }
+
+    /* ── ASYNC SECTION ── */
+    .async-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .compare-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1.5rem;
+    }
+
+    .compare-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-item {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .compare-item::before {
+      content: '▸';
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-stack {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stack-tag {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--green);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--green-dim); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 6px transparent; }
+    }
+
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .models-grid { grid-template-columns: 1fr; }
+      .rules-grid { grid-template-columns: 1fr; }
+      .async-compare { grid-template-columns: 1fr; }
+      .error-example { grid-template-columns: 1fr; }
+      .endpoint-row { grid-template-columns: 80px 1fr; }
+      .endpoint-row .endpoint-desc,
+      .endpoint-row .status-code { display: none; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="live-dot"></span>
+    EncuestaAPI
+    <span>/ v1.0.0</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#endpoints">Endpoints</a></li>
+    <li><a href="#modelos">Modelos</a></li>
+    <li><a href="#validacion">Validación</a></li>
+    <li><a href="#uso">Uso</a></li>
+    <li><a href="#arquitectura">Arquitectura</a></li>
+  </ul>
+  <div class="nav-badge">FASTAPI + PYDANTIC v2</div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">Pipeline de Ingesta · Validación Estadística · REST API</div>
+    <h1>
+      API de Gestión de<br>
+      <span class="accent">Encuestas</span>
+      <span class="accent2"> Poblacionales</span>
+    </h1>
+    <p class="hero-desc">
+      Sistema de recolección y validación rigurosa de datos demográficos colombianos.
+      Actúa como aduana transaccional — ningún dato inválido contamina el repositorio de análisis.
+    </p>
+    <div class="hero-actions">
+      <a href="http://127.0.0.1:8000/docs" class="btn btn-primary" target="_blank">▶ Abrir Swagger UI</a>
+      <a href="#endpoints" class="btn btn-secondary">Ver Endpoints →</a>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-value">6</span>
+        <span class="stat-label">Endpoints REST</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">3</span>
+        <span class="stat-label">Modelos Pydantic</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">33</span>
+        <span class="stat-label">Departamentos validados</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">422</span>
+        <span class="stat-label">Handler personalizado</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARQUITECTURA / PIPELINE -->
+  <section class="section" id="arquitectura">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Pipeline de datos</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem; line-height:1.7;">
+      Cada petición recorre un pipeline de validación antes de persistirse en memoria.
+      Si falla en cualquier etapa, se retorna un <span style="color:var(--red)">HTTP 422</span> con detalle de errores — nunca datos corruptos llegan al repositorio.
+    </p>
+
+    <div class="pipeline">
+      <div class="pipe-node">
+        <span class="pipe-node-icon">📡</span>
+        <div class="pipe-node-label">entrada</div>
+        <div class="pipe-node-name">JSON Request</div>
+      </div>
+      <div class="pipe-arrow">
+        <span>──▶</span>
+        <span class="pipe-arrow-label">HTTP POST</span>
+      </div>
+      <div class="pipe-node">
+        <span class="pipe-node-icon">⚡</span>
+        <div class="pipe-node-label">framework</div>
+        <div class="pipe-node-name">FastAPI / ASGI</div>
+      </div>
+      <div class="pipe-arrow">
+        <span>──▶</span>
+        <span class="pipe-arrow-label">parseo</span>
+      </div>
+      <div class="pipe-node">
+        <span class="pipe-node-icon">🛡️</span>
+        <div class="pipe-node-label">validación</div>
+        <div class="pipe-node-name">Pydantic v2</div>
+      </div>
+      <div class="pipe-arrow">
+        <span>──▶</span>
+        <span class="pipe-arrow-label">reglas</span>
+      </div>
+      <div class="pipe-node">
+        <span class="pipe-node-icon">✅</span>
+        <div class="pipe-node-label">lógica</div>
+        <div class="pipe-node-name">Endpoint Handler</div>
+      </div>
+      <div class="pipe-arrow">
+        <span>──▶</span>
+        <span class="pipe-arrow-label">persist</span>
+      </div>
+      <div class="pipe-node">
+        <span class="pipe-node-icon">🗄️</span>
+        <div class="pipe-node-label">almacén</div>
+        <div class="pipe-node-name">In-Memory DB</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDPOINTS -->
+  <section class="section" id="endpoints">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Endpoints</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="endpoints-list">
+      <div class="endpoint-row header">
+        <span>Método</span>
+        <span>Ruta</span>
+        <span>Descripción</span>
+        <span style="text-align:right">Status</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method post">POST</span>
+        <span class="endpoint-path">/encuestas/</span>
+        <span class="endpoint-desc">Registrar nueva encuesta completa</span>
+        <span class="status-code">201</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/encuestas/</span>
+        <span class="endpoint-desc">Listar todas las encuestas registradas</span>
+        <span class="status-code">200</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/encuestas/<em>{id}</em></span>
+        <span class="endpoint-desc">Obtener una encuesta por su UUID</span>
+        <span class="status-code">200 / <span class="s404">404</span></span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method get">GET</span>
+        <span class="endpoint-path">/encuestas/estadisticas/</span>
+        <span class="endpoint-desc">Resumen: conteo, edad promedio, distribuciones</span>
+        <span class="status-code">200</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method put">PUT</span>
+        <span class="endpoint-path">/encuestas/<em>{id}</em></span>
+        <span class="endpoint-desc">Reemplazar datos de una encuesta existente</span>
+        <span class="status-code">200 / <span class="s404">404</span></span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method delete">DELETE</span>
+        <span class="endpoint-path">/encuestas/<em>{id}</em></span>
+        <span class="endpoint-desc">Eliminar permanentemente una encuesta</span>
+        <span class="status-code">204 / <span class="s404">404</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODELOS -->
+  <section class="section" id="modelos">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Modelos Pydantic</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="models-grid">
+      <div class="model-card">
+        <div class="model-card-title">📋 Encuestado</div>
+        <div class="model-field">
+          <span class="field-name">nombre</span>
+          <span class="field-type">str</span>
+          <span class="field-badge badge-val">validado</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">edad</span>
+          <span class="field-type">int</span>
+          <span class="field-badge badge-val">0–120</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">estrato</span>
+          <span class="field-type">int</span>
+          <span class="field-badge badge-val">1–6</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">departamento</span>
+          <span class="field-type">str</span>
+          <span class="field-badge badge-val">lista CO</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">genero</span>
+          <span class="field-type">Optional[str]</span>
+          <span class="field-badge badge-opt">opcional</span>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="model-card-title">📝 RespuestaEncuesta</div>
+        <div class="model-field">
+          <span class="field-name">pregunta_id</span>
+          <span class="field-type">int</span>
+          <span class="field-badge badge-req">req</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">pregunta_texto</span>
+          <span class="field-type">str</span>
+          <span class="field-badge badge-req">req</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">respuesta</span>
+          <span class="field-type">Union[int,float,str]</span>
+          <span class="field-badge badge-val">validado</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">tipo</span>
+          <span class="field-type">likert|%|abierta</span>
+          <span class="field-badge badge-val">pattern</span>
+        </div>
+      </div>
+
+      <div class="model-card">
+        <div class="model-card-title">📦 EncuestaCompleta</div>
+        <div class="model-field">
+          <span class="field-name">encuestado</span>
+          <span class="field-type">Encuestado</span>
+          <span class="field-badge badge-req">anidado</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">respuestas</span>
+          <span class="field-type">List[Respuesta]</span>
+          <span class="field-badge badge-val">≥1 item</span>
+        </div>
+        <div class="model-field">
+          <span class="field-name">version_encuesta</span>
+          <span class="field-type">Optional[str]</span>
+          <span class="field-badge badge-opt">"1.0"</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALIDACIÓN -->
+  <section class="section" id="validacion">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Reglas de Validación</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-title">🧬 Edad — restricción biológica</div>
+        <div class="rule-desc">
+          Validador <code style="color:var(--cyan)">mode='after'</code> — Pydantic ya convirtió el valor a <code>int</code> antes de validar.
+          <span class="rule-range">0 ≤ edad ≤ 120</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">🏘️ Estrato — contexto colombiano</div>
+        <div class="rule-desc">
+          Validador <code style="color:var(--cyan)">mode='after'</code> — Solo acepta enteros del sistema de estratificación socioeconómica de Colombia.
+          <span class="rule-range">1 · 2 · 3 · 4 · 5 · 6</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">🗺️ Departamento — 33 entidades válidas</div>
+        <div class="rule-desc">
+          Validador <code style="color:var(--amber)">mode='before'</code> — Opera sobre el string crudo, normaliza capitalización y verifica contra lista oficial.
+          <span class="rule-range">Antioquia, Bogotá D.C., Valle del Cauca…</span>
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-title">📊 Escala Likert / Porcentaje</div>
+        <div class="rule-desc">
+          <code style="color:var(--purple)">@model_validator</code> — Valida el rango de la respuesta según el tipo de pregunta declarado.
+          <span class="rule-range">Likert: 1–5 · Porcentaje: 0.0–100.0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ERROR EXAMPLE -->
+    <div style="margin-top:2rem">
+      <p style="font-size:0.82rem; color:var(--text-dim); margin-bottom:1rem;">
+        Ejemplo: qué ocurre cuando se envían datos inválidos vs. válidos
+      </p>
+      <div class="error-example">
+        <div>
+          <span class="error-label label-bad">❌ Payload inválido</span>
+          <div class="code-block" style="margin-top:0; border-radius:0 4px 4px 4px;">
+            <div class="code-header">
+              <span class="code-lang">JSON — Request</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="code-body"><span class="c-dim">{</span>
+  <span class="c-cyan">"encuestado"</span><span class="c-dim">: {</span>
+    <span class="c-cyan">"nombre"</span><span class="c-dim">:</span> <span class="c-amber">"Ana"</span><span class="c-dim">,</span>
+    <span class="c-cyan">"edad"</span><span class="c-dim">:</span> <span class="c-red">150</span><span class="c-dim">,</span>   <span class="c-dim">// ❌ &gt; 120</span>
+    <span class="c-cyan">"estrato"</span><span class="c-dim">:</span> <span class="c-red">9</span><span class="c-dim">,</span>    <span class="c-dim">// ❌ &gt; 6</span>
+    <span class="c-cyan">"departamento"</span><span class="c-dim">:</span> <span class="c-red">"Texas"</span>
+  <span class="c-dim">}</span>              <span class="c-dim">// ❌ no existe</span>
+<span class="c-dim">}</span></div>
+          </div>
+        </div>
+        <div>
+          <span class="error-label label-good">✅ Respuesta 422</span>
+          <div class="code-block" style="margin-top:0; border-radius:0 4px 4px 4px;">
+            <div class="code-header">
+              <span class="code-lang">JSON — Response 422</span>
+              <div class="code-dots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="code-body"><span class="c-dim">{</span>
+  <span class="c-cyan">"error"</span><span class="c-dim">:</span> <span class="c-amber">"Error de validación"</span><span class="c-dim">,</span>
+  <span class="c-cyan">"total_errores"</span><span class="c-dim">:</span> <span class="c-green">3</span><span class="c-dim">,</span>
+  <span class="c-cyan">"errores"</span><span class="c-dim">: [</span>
+    <span class="c-dim">{</span>
+      <span class="c-cyan">"campo"</span><span class="c-dim">:</span> <span class="c-amber">"edad"</span><span class="c-dim">,</span>
+      <span class="c-cyan">"mensaje"</span><span class="c-dim">:</span> <span class="c-amber">"entre 0 y 120"</span>
+    <span class="c-dim">},</span>
+    <span class="c-dim">...</span>
+  <span class="c-dim">]</span>
+<span class="c-dim">}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USO / EJEMPLO -->
+  <section class="section" id="uso">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Cómo usar la API</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem;">
+      Ejemplo completo de registro de encuesta usando Python + <code style="color:var(--cyan)">requests</code>
+    </p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">Python — POST /encuestas/</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="code-body"><span class="c-purple">import</span> <span class="c-text">requests</span>
+
+<span class="c-text">payload</span> <span class="c-dim">=</span> <span class="c-dim">{</span>
+    <span class="c-amber">"encuestado"</span><span class="c-dim">: {</span>
+        <span class="c-amber">"nombre"</span><span class="c-dim">:</span>       <span class="c-green">"Laura Gómez"</span><span class="c-dim">,</span>
+        <span class="c-amber">"edad"</span><span class="c-dim">:</span>         <span class="c-cyan">28</span><span class="c-dim">,</span>
+        <span class="c-amber">"estrato"</span><span class="c-dim">:</span>      <span class="c-cyan">3</span><span class="c-dim">,</span>
+        <span class="c-amber">"departamento"</span><span class="c-dim">:</span> <span class="c-green">"Antioquia"</span><span class="c-dim">,</span>
+        <span class="c-amber">"genero"</span><span class="c-dim">:</span>       <span class="c-green">"Femenino"</span>
+    <span class="c-dim">},</span>
+    <span class="c-amber">"respuestas"</span><span class="c-dim">: [{</span>
+        <span class="c-amber">"pregunta_id"</span><span class="c-dim">:</span>    <span class="c-cyan">1</span><span class="c-dim">,</span>
+        <span class="c-amber">"pregunta_texto"</span><span class="c-dim">:</span> <span class="c-green">"¿Satisfacción con servicios?"</span><span class="c-dim">,</span>
+        <span class="c-amber">"respuesta"</span><span class="c-dim">:</span>      <span class="c-cyan">4</span><span class="c-dim">,</span>
+        <span class="c-amber">"tipo"</span><span class="c-dim">:</span>           <span class="c-green">"likert"</span>
+    <span class="c-dim">}]</span>
+<span class="c-dim">}</span>
+
+<span class="c-text">r</span> <span class="c-dim">=</span> <span class="c-text">requests</span><span class="c-dim">.</span><span class="c-cyan">post</span><span class="c-dim">(</span>
+    <span class="c-green">"http://127.0.0.1:8000/encuestas/"</span><span class="c-dim">,</span>
+    <span class="c-text">json</span><span class="c-dim">=</span><span class="c-text">payload</span>
+<span class="c-dim">)</span>
+
+<span class="c-purple">print</span><span class="c-dim">(</span><span class="c-text">r</span><span class="c-dim">.</span><span class="c-text">status_code</span><span class="c-dim">)</span>   <span class="c-dim"># 201</span>
+<span class="c-purple">print</span><span class="c-dim">(</span><span class="c-text">r</span><span class="c-dim">.</span><span class="c-cyan">json</span><span class="c-dim">())</span>          <span class="c-dim"># {"id": "abc123-...", ...}</span></div>
+    </div>
+
+    <!-- ASYNC COMPARE -->
+    <div style="margin-top:2.5rem">
+      <p style="font-size:0.82rem; color:var(--text-dim); margin-bottom:1rem;">
+        ¿Por qué <code style="color:var(--green)">async def</code> en FastAPI?
+      </p>
+      <div class="async-compare">
+        <div class="compare-card">
+          <div class="compare-title" style="color:var(--text-dim)">⛔ <code>def</code> — Síncrono (WSGI)</div>
+          <div class="compare-item">Un hilo por petición. Mientras espera I/O, el hilo queda bloqueado.</div>
+          <div class="compare-item">100 peticiones simultáneas = 100 hilos. Costoso en memoria.</div>
+          <div class="compare-item">Modelo de Flask / Django clásico.</div>
+        </div>
+        <div class="compare-card" style="border-color:var(--green)">
+          <div class="compare-title" style="color:var(--green)">✅ <code>async def</code> — Asíncrono (ASGI)</div>
+          <div class="compare-item">Un hilo cede el control con <code>await</code> mientras espera I/O.</div>
+          <div class="compare-item">Miles de peticiones concurrentes con pocos hilos. Eficiente.</div>
+          <div class="compare-item">Modelo de FastAPI / Starlette sobre Uvicorn.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALACIÓN -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Instalación rápida</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <span class="code-lang">bash — setup</span>
+        <div class="code-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="code-body"><span class="c-dim"># 1. Clonar el repositorio</span>
+<span class="c-green">git clone</span> <span class="c-cyan">https://github.com/jpablovargas340/encuesta-api.git</span>
+<span class="c-green">cd</span> encuesta-api
+
+<span class="c-dim"># 2. Crear y activar entorno virtual</span>
+<span class="c-green">python</span> -m venv .venv
+<span class="c-green">source</span> .venv/bin/activate    <span class="c-dim"># Linux/macOS</span>
+.venv\Scripts\activate         <span class="c-dim"># Windows</span>
+
+<span class="c-dim"># 3. Instalar dependencias</span>
+<span class="c-green">pip install</span> -r requirements.txt
+
+<span class="c-dim"># 4. Ejecutar el servidor</span>
+<span class="c-green">uvicorn</span> main:app --reload
+
+<span class="c-dim"># ✅ API disponible en http://127.0.0.1:8000</span>
+<span class="c-dim"># 📖 Swagger UI en  http://127.0.0.1:8000/docs</span></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div style="color:var(--text); margin-bottom:0.4rem; font-family:var(--sans); font-weight:700;">
+      Encuesta API — Ingeniería de Datos
+    </div>
+    <div>Construido con FastAPI · Pydantic v2 · Python 3.11</div>
+  </div>
+  <div class="footer-stack">
+    <span class="stack-tag">FastAPI 0.115</span>
+    <span class="stack-tag">Pydantic 2.8</span>
+    <span class="stack-tag">Uvicorn 0.30</span>
+    <span class="stack-tag">Python 3.11</span>
+    <span class="stack-tag">REST</span>
+    <span class="stack-tag">ASGI</span>
+  </div>
+</footer>
+
+<script>
+  // ── PARTICLES ──
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function Particle() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.r  = Math.random() * 1.5 + 0.5;
+    this.alpha = Math.random() * 0.4 + 0.1;
+    this.color = Math.random() > 0.5 ? '0,255,136' : '0,212,255';
+  }
+
+  function initParticles(n) {
+    particles = Array.from({length: n}, () => new Particle());
+  }
+
+  function drawLines() {
+    const maxDist = 120;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if (d < maxDist) {
+          ctx.strokeStyle = `rgba(0,255,136,${0.05 * (1 - d/maxDist)})`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    drawLines();
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${p.color},${p.alpha})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(animate);
+  }
+
+  resize();
+  initParticles(60);
+  animate();
+  window.addEventListener('resize', () => { resize(); initParticles(60); });
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.section').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
