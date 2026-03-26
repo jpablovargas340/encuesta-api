@@ -14,6 +14,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from models import EncuestaCompleta
@@ -41,6 +42,18 @@ app = FastAPI(
         "cualquier operación analítica."
     ),
     version="1.0.0",
+)
+
+# ─────────────────────────────────────────────
+# CORS — permite que navegadores externos (ej: la página de docs)
+# llamen a la API desde cualquier origen.
+# En producción restringir allow_origins a dominios específicos.
+# ─────────────────────────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ─────────────────────────────────────────────
