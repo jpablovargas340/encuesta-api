@@ -11,11 +11,13 @@ import base64
 from datetime import datetime
 from typing import Any
 from uuid import uuid4
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from models import EncuestaCompleta
 
@@ -55,6 +57,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ─────────────────────────────────────────────
+# Archivos estáticos / HTML propio
+# ─────────────────────────────────────────────
+BASE_DIR = Path(__file__).resolve().parent
+DOCS_DIR = BASE_DIR / "docs"
+
+app.mount("/static", StaticFiles(directory=DOCS_DIR), name="static")
+
+@app.get("/", include_in_schema=False)
+async def home():
+    return FileResponse(DOCS_DIR / "index.html")
 
 # ─────────────────────────────────────────────
 # Almacenamiento en memoria (simula una base de datos)
@@ -310,24 +324,10 @@ async def eliminar_encuesta(encuesta_id: str):
         )
     del db[encuesta_id]
     logger.info(f"✓ Encuesta {encuesta_id} eliminada.")
-    # HTTP 204 No Content: el estándar HTTP prohíbe que 204 tenga body.
-    # Retornamos Response vacía explícita para garantizar que FastAPI no intente
-    # serializar ningún valor y respete el status code 204 correctamente.
     return Response(status_code=204)
 
 
 # ── GET /encuestas/exportar/{formato} ────────────────────────────
-# BONUS: Serialización JSON vs Pickle
-# ─────────────────────────────────────────────────────────────────
-# JSON:   formato de texto universal, legible por humanos y cualquier lenguaje.
-#         Interoperable, pero solo soporta tipos básicos (str, int, float, list, dict).
-#
-# Pickle: formato binario exclusivo de Python. Soporta tipos complejos (clases,
-#         funciones, objetos). MÁS rápido y compacto, pero NO seguro para datos
-#         de fuentes externas (puede ejecutar código arbitrario al deserializar).
-#
-# Regla de oro: JSON para intercambio entre sistemas, Pickle para caché interno Python.
-# ─────────────────────────────────────────────────────────────────
 @app.get(
     "/encuestas/exportar/{formato}",
     status_code=200,
@@ -352,8 +352,7 @@ async def exportar_encuestas(formato: str):
     datos = list(db.values())
 
     if formato == "json":
-        # JSON: serialización nativa de Python, legible por cualquier sistema
-        datos_serializados = datos  # FastAPI ya convierte dicts a JSON
+        datos_serializados = datos
         tamanio_bytes = len(str(datos_serializados).encode("utf-8"))
         return {
             "formato": "JSON",
@@ -365,8 +364,6 @@ async def exportar_encuestas(formato: str):
         }
 
     else:
-        # Pickle: serialización binaria de Python
-        # base64 convierte los bytes binarios a texto para poder incluirlos en JSON
         pickle_bytes = pickle.dumps(datos)
         datos_b64 = base64.b64encode(pickle_bytes).decode("utf-8")
         return {
