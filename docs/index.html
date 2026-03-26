@@ -8,19 +8,19 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg:        #080c10;
-      --bg2:       #0d1117;
-      --bg3:       #111820;
-      --border:    #1e2d3d;
-      --green:     #00ff88;
-      --green-dim: #00ff8844;
-      --cyan:      #00d4ff;
-      --cyan-dim:  #00d4ff22;
-      --amber:     #ffb347;
-      --red:       #ff5f5f;
-      --purple:    #b388ff;
-      --text:      #c9d1d9;
-      --text-dim:  #6e7a8a;
+      --bg:        #f4f5f7;
+      --bg2:       #ffffff;
+      --bg3:       #eaecf0;
+      --border:    #d0d5dd;
+      --green:     #0a7c4e;
+      --green-dim: #0a7c4e22;
+      --cyan:      #0070a8;
+      --cyan-dim:  #0070a822;
+      --amber:     #b86a00;
+      --red:       #c0392b;
+      --purple:    #6c3fc5;
+      --text:      #1a2332;
+      --text-dim:  #5c6a7a;
       --mono:      'JetBrains Mono', monospace;
       --sans:      'Syne', sans-serif;
     }
@@ -46,25 +46,15 @@
         linear-gradient(var(--border) 1px, transparent 1px),
         linear-gradient(90deg, var(--border) 1px, transparent 1px);
       background-size: 40px 40px;
-      opacity: 0.3;
+      opacity: 0.4;
       pointer-events: none;
       z-index: 0;
     }
 
-    /* ── SCANLINE OVERLAY ── */
+    /* ── SCANLINE OVERLAY (light theme: disabled) ── */
     body::after {
       content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.08) 2px,
-        rgba(0,0,0,0.08) 4px
-      );
       pointer-events: none;
-      z-index: 1000;
     }
 
     /* ── CANVAS PARTICLES ── */
@@ -89,7 +79,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(8,12,16,0.92);
+      background: rgba(244,245,247,0.94);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 1rem 2rem;
@@ -127,6 +117,207 @@
     }
 
     .nav-links a:hover { color: var(--cyan); }
+
+    .nav-links a.nav-playground {
+      color: var(--green);
+      border: 1px solid var(--green);
+      padding: 0.2rem 0.7rem;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-links a.nav-playground:hover {
+      background: var(--green-dim);
+      color: var(--green);
+    }
+
+    /* ── PLAYGROUND SECTION ── */
+    .playground-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .pg-tabs {
+      display: flex;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .pg-tab {
+      padding: 0.8rem 1.4rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .pg-tab:hover { color: var(--text); background: var(--bg2); }
+    .pg-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); background: var(--bg2); }
+    .pg-tab .pg-method { font-size: 0.62rem; font-weight: 700; padding: 0.1rem 0.35rem; border-radius: 2px; }
+    .pg-tab .pm-post { background: #d1fae5; color: var(--green); }
+    .pg-tab .pm-get  { background: #dbeafe; color: var(--cyan); }
+    .pg-tab .pm-del  { background: #fee2e2; color: var(--red); }
+    .pg-tab .pm-put  { background: #fef3c7; color: var(--amber); }
+
+    .pg-panel { display: none; padding: 1.5rem; }
+    .pg-panel.active { display: block; }
+
+    .pg-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .pg-col-label {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .pg-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 1rem;
+      resize: vertical;
+      line-height: 1.7;
+      transition: border-color 0.2s;
+      min-height: 220px;
+    }
+
+    .pg-textarea:focus { outline: none; border-color: var(--cyan); }
+
+    .pg-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      padding: 0.6rem 0.9rem;
+      margin-bottom: 0.8rem;
+      transition: border-color 0.2s;
+    }
+
+    .pg-input:focus { outline: none; border-color: var(--cyan); }
+
+    .pg-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.4rem;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 3px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s;
+      letter-spacing: 0.04em;
+    }
+
+    .pg-btn-send {
+      background: var(--cyan);
+      color: #fff;
+    }
+
+    .pg-btn-send:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .pg-btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .pg-btn-clear {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+    }
+
+    .pg-btn-clear:hover { border-color: var(--text-dim); color: var(--text); }
+
+    .pg-response-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .pg-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+    }
+
+    .pg-status-ok  { background: #d1fae5; color: var(--green); border: 1px solid var(--green); }
+    .pg-status-err { background: #fee2e2; color: var(--red); border: 1px solid var(--red); }
+    .pg-status-neu { background: var(--bg3); color: var(--text-dim); border: 1px solid var(--border); }
+
+    .pg-response-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.8;
+      overflow: auto;
+      min-height: 220px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .pg-timing { font-size: 0.7rem; color: var(--text-dim); }
+
+    .pg-url-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem 0.9rem;
+      margin-bottom: 1rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .pg-url-bar .pg-url-method {
+      font-weight: 700;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .pg-url-bar span { color: var(--text); word-break: break-all; }
+
+    .json-key    { color: #0070a8; }
+    .json-str    { color: #0a7c4e; }
+    .json-num    { color: #b86a00; }
+    .json-bool   { color: #6c3fc5; }
+    .json-null   { color: #c0392b; }
 
     .nav-badge {
       background: var(--green-dim);
@@ -351,10 +542,10 @@
       width: fit-content;
     }
 
-    .method.post { background: #003d1f; color: var(--green); border: 1px solid var(--green); }
-    .method.get  { background: #001a2e; color: var(--cyan);  border: 1px solid var(--cyan); }
-    .method.put  { background: #2e1a00; color: var(--amber); border: 1px solid var(--amber); }
-    .method.delete { background: #2e0000; color: var(--red); border: 1px solid var(--red); }
+    .method.post { background: #d1fae5; color: var(--green); border: 1px solid var(--green); }
+    .method.get  { background: #dbeafe; color: var(--cyan);  border: 1px solid var(--cyan); }
+    .method.put  { background: #fef3c7; color: var(--amber); border: 1px solid var(--amber); }
+    .method.delete { background: #fee2e2; color: var(--red); border: 1px solid var(--red); }
 
     .endpoint-path {
       font-size: 0.88rem;
@@ -551,9 +742,9 @@
       border-radius: 2px;
       letter-spacing: 0.05em;
     }
-    .badge-req  { background: #2e0a00; color: var(--red); }
-    .badge-opt  { background: #001a2e; color: var(--cyan); }
-    .badge-val  { background: #003d1f; color: var(--green); }
+    .badge-req  { background: #fee2e2; color: var(--red); }
+    .badge-opt  { background: #dbeafe; color: var(--cyan); }
+    .badge-val  { background: #d1fae5; color: var(--green); }
 
     /* ── VALIDATION RULES ── */
     .rules-grid {
@@ -614,8 +805,8 @@
       display: inline-block;
     }
 
-    .label-bad  { background: #2e0000; color: var(--red); }
-    .label-good { background: #003d1f; color: var(--green); }
+    .label-bad  { background: #fee2e2; color: var(--red); }
+    .label-good { background: #d1fae5; color: var(--green); }
 
     /* ── ASYNC SECTION ── */
     .async-compare {
@@ -751,6 +942,7 @@
     <li><a href="#uso">Uso</a></li>
     <li><a href="#guia">Guía</a></li>
     <li><a href="#arquitectura">Arquitectura</a></li>
+    <li><a href="#playground" class="nav-playground">⚡ Playground</a></li>
   </ul>
   <div class="nav-badge">FASTAPI + PYDANTIC v2</div>
 </nav>
@@ -1361,6 +1553,169 @@
 
 </div>
 
+<!-- PLAYGROUND -->
+<section class="section" id="playground">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">Playground — Prueba la API</h2>
+    <div class="section-line"></div>
+  </div>
+  <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem; line-height:1.7;">
+    Ejecuta peticiones reales contra la API en producción directamente desde aquí. Modifica el cuerpo, observa el JSON de respuesta y el código de estado en tiempo real.
+  </p>
+
+  <div class="playground-wrap">
+    <div class="pg-tabs">
+      <button class="pg-tab active" onclick="pgSwitch(this,'pg-post-encuesta')">
+        <span class="pg-method pm-post">POST</span> /encuestas/
+      </button>
+      <button class="pg-tab" onclick="pgSwitch(this,'pg-get-list')">
+        <span class="pg-method pm-get">GET</span> /encuestas/
+      </button>
+      <button class="pg-tab" onclick="pgSwitch(this,'pg-get-stats')">
+        <span class="pg-method pm-get">GET</span> /estadisticas/
+      </button>
+      <button class="pg-tab" onclick="pgSwitch(this,'pg-get-id')">
+        <span class="pg-method pm-get">GET</span> /encuestas/{id}
+      </button>
+      <button class="pg-tab" onclick="pgSwitch(this,'pg-delete-id')">
+        <span class="pg-method pm-del">DELETE</span> /encuestas/{id}
+      </button>
+    </div>
+
+    <!-- POST /encuestas/ -->
+    <div class="pg-panel active" id="pg-post-encuesta">
+      <div class="pg-url-bar">
+        <span class="pg-url-method pm-post" style="background:#d1fae5;color:var(--green);border:1px solid var(--green);">POST</span>
+        <span>https://encuesta-api-production-9316.up.railway.app/encuestas/</span>
+      </div>
+      <div class="pg-row">
+        <div>
+          <div class="pg-col-label">Request Body (JSON)</div>
+          <textarea class="pg-textarea" id="body-post-encuesta" spellcheck="false">{
+  "encuestado": {
+    "nombre": "Laura Gómez",
+    "edad": 28,
+    "estrato": 3,
+    "departamento": "Antioquia",
+    "genero": "Femenino"
+  },
+  "respuestas": [
+    {
+      "pregunta_id": 1,
+      "pregunta_texto": "¿Qué tan satisfecho está con los servicios públicos?",
+      "respuesta": 4,
+      "tipo": "likert"
+    }
+  ],
+  "version_encuesta": "1.0"
+}</textarea>
+          <div style="display:flex; gap:0.6rem; margin-top:0.8rem;">
+            <button class="pg-btn pg-btn-send" onclick="pgSend('POST','https://encuesta-api-production-9316.up.railway.app/encuestas/','body-post-encuesta','resp-post-encuesta','status-post-encuesta','time-post-encuesta')">▶ Enviar</button>
+            <button class="pg-btn pg-btn-clear" onclick="pgClear('resp-post-encuesta','status-post-encuesta','time-post-encuesta')">Limpiar</button>
+          </div>
+        </div>
+        <div>
+          <div class="pg-response-header">
+            <div class="pg-col-label">Respuesta</div>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <span class="pg-status-badge pg-status-neu" id="status-post-encuesta">—</span>
+              <span class="pg-timing" id="time-post-encuesta"></span>
+            </div>
+          </div>
+          <div class="pg-response-box" id="resp-post-encuesta">// La respuesta aparecerá aquí...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GET /encuestas/ -->
+    <div class="pg-panel" id="pg-get-list">
+      <div class="pg-url-bar">
+        <span class="pg-url-method pm-get" style="background:#dbeafe;color:var(--cyan);border:1px solid var(--cyan);">GET</span>
+        <span>https://encuesta-api-production-9316.up.railway.app/encuestas/</span>
+      </div>
+      <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1rem;">Retorna la lista completa de encuestas registradas en la sesión actual del servidor.</p>
+      <div style="display:flex;gap:0.6rem;margin-bottom:1rem;">
+        <button class="pg-btn pg-btn-send" onclick="pgSendGet('https://encuesta-api-production-9316.up.railway.app/encuestas/','resp-get-list','status-get-list','time-get-list')">▶ Ejecutar</button>
+        <button class="pg-btn pg-btn-clear" onclick="pgClear('resp-get-list','status-get-list','time-get-list')">Limpiar</button>
+      </div>
+      <div class="pg-response-header">
+        <div class="pg-col-label">Respuesta</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="pg-status-badge pg-status-neu" id="status-get-list">—</span>
+          <span class="pg-timing" id="time-get-list"></span>
+        </div>
+      </div>
+      <div class="pg-response-box" id="resp-get-list">// La respuesta aparecerá aquí...</div>
+    </div>
+
+    <!-- GET /estadisticas/ -->
+    <div class="pg-panel" id="pg-get-stats">
+      <div class="pg-url-bar">
+        <span class="pg-url-method pm-get" style="background:#dbeafe;color:var(--cyan);border:1px solid var(--cyan);">GET</span>
+        <span>https://encuesta-api-production-9316.up.railway.app/encuestas/estadisticas/</span>
+      </div>
+      <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1rem;">Calcula estadísticas en tiempo real: promedio de edad, distribución por estrato y por departamento.</p>
+      <div style="display:flex;gap:0.6rem;margin-bottom:1rem;">
+        <button class="pg-btn pg-btn-send" onclick="pgSendGet('https://encuesta-api-production-9316.up.railway.app/encuestas/estadisticas/','resp-get-stats','status-get-stats','time-get-stats')">▶ Ejecutar</button>
+        <button class="pg-btn pg-btn-clear" onclick="pgClear('resp-get-stats','status-get-stats','time-get-stats')">Limpiar</button>
+      </div>
+      <div class="pg-response-header">
+        <div class="pg-col-label">Respuesta</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="pg-status-badge pg-status-neu" id="status-get-stats">—</span>
+          <span class="pg-timing" id="time-get-stats"></span>
+        </div>
+      </div>
+      <div class="pg-response-box" id="resp-get-stats">// La respuesta aparecerá aquí...</div>
+    </div>
+
+    <!-- GET /encuestas/{id} -->
+    <div class="pg-panel" id="pg-get-id">
+      <div class="pg-url-bar">
+        <span class="pg-url-method pm-get" style="background:#dbeafe;color:var(--cyan);border:1px solid var(--cyan);">GET</span>
+        <span>https://encuesta-api-production-9316.up.railway.app/encuestas/<strong>{id}</strong></span>
+      </div>
+      <div class="pg-col-label">ID de la encuesta</div>
+      <input class="pg-input" id="input-get-id" placeholder="Ej: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+      <div style="display:flex;gap:0.6rem;margin-bottom:1rem;">
+        <button class="pg-btn pg-btn-send" onclick="pgSendGetId()">▶ Ejecutar</button>
+        <button class="pg-btn pg-btn-clear" onclick="pgClear('resp-get-id','status-get-id','time-get-id')">Limpiar</button>
+      </div>
+      <div class="pg-response-header">
+        <div class="pg-col-label">Respuesta</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="pg-status-badge pg-status-neu" id="status-get-id">—</span>
+          <span class="pg-timing" id="time-get-id"></span>
+        </div>
+      </div>
+      <div class="pg-response-box" id="resp-get-id">// La respuesta aparecerá aquí...</div>
+    </div>
+
+    <!-- DELETE /encuestas/{id} -->
+    <div class="pg-panel" id="pg-delete-id">
+      <div class="pg-url-bar">
+        <span class="pg-url-method pm-del" style="background:#fee2e2;color:var(--red);border:1px solid var(--red);">DELETE</span>
+        <span>https://encuesta-api-production-9316.up.railway.app/encuestas/<strong>{id}</strong></span>
+      </div>
+      <div class="pg-col-label">ID de la encuesta a eliminar</div>
+      <input class="pg-input" id="input-delete-id" placeholder="Ej: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+      <div style="display:flex;gap:0.6rem;margin-bottom:1rem;">
+        <button class="pg-btn pg-btn-send" style="background:var(--red);" onclick="pgSendDelete()">▶ Eliminar</button>
+        <button class="pg-btn pg-btn-clear" onclick="pgClear('resp-delete-id','status-delete-id','time-delete-id')">Limpiar</button>
+      </div>
+      <div class="pg-response-header">
+        <div class="pg-col-label">Respuesta</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;">
+          <span class="pg-status-badge pg-status-neu" id="status-delete-id">—</span>
+          <span class="pg-timing" id="time-delete-id"></span>
+        </div>
+      </div>
+      <div class="pg-response-box" id="resp-delete-id">// La respuesta aparecerá aquí...</div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div>
@@ -1397,7 +1752,7 @@
     this.vy = (Math.random() - 0.5) * 0.3;
     this.r  = Math.random() * 1.5 + 0.5;
     this.alpha = Math.random() * 0.4 + 0.1;
-    this.color = Math.random() > 0.5 ? '0,255,136' : '0,212,255';
+    this.color = Math.random() > 0.5 ? '10,124,78' : '0,112,168';
   }
 
   function initParticles(n) {
@@ -1412,7 +1767,7 @@
         const dy = particles[i].y - particles[j].y;
         const d  = Math.sqrt(dx*dx + dy*dy);
         if (d < maxDist) {
-          ctx.strokeStyle = `rgba(0,255,136,${0.05 * (1 - d/maxDist)})`;
+          ctx.strokeStyle = `rgba(10,124,78,${0.08 * (1 - d/maxDist)})`;
           ctx.lineWidth = 0.5;
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -1443,7 +1798,134 @@
   animate();
   window.addEventListener('resize', () => { resize(); initParticles(60); });
 
-  // ── SCROLL REVEAL ──
+  // ── PLAYGROUND ──
+  function pgSwitch(btn, panelId) {
+    document.querySelectorAll('.pg-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pg-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+  }
+
+  function syntaxHighlight(json) {
+    if (typeof json !== 'string') json = JSON.stringify(json, null, 2);
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+      let cls = 'json-num';
+      if (/^"/.test(match)) {
+        cls = /:$/.test(match) ? 'json-key' : 'json-str';
+      } else if (/true|false/.test(match)) {
+        cls = 'json-bool';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    });
+  }
+
+  function setStatus(statusEl, code) {
+    const el = document.getElementById(statusEl);
+    el.textContent = code ? `HTTP ${code}` : '—';
+    el.className = 'pg-status-badge';
+    if (!code) el.classList.add('pg-status-neu');
+    else if (code >= 200 && code < 300) el.classList.add('pg-status-ok');
+    else el.classList.add('pg-status-err');
+  }
+
+  async function pgSend(method, url, bodyId, respId, statusId, timeId) {
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.textContent = '⏳ Enviando...';
+    const respEl = document.getElementById(respId);
+    respEl.innerHTML = '// Esperando respuesta...';
+    const t0 = performance.now();
+    let bodyText = document.getElementById(bodyId).value;
+    try {
+      JSON.parse(bodyText);
+    } catch(e) {
+      respEl.innerHTML = `<span class="json-null">// JSON inválido: ${e.message}</span>`;
+      btn.disabled = false; btn.textContent = '▶ Enviar';
+      return;
+    }
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: bodyText
+      });
+      const ms = Math.round(performance.now() - t0);
+      document.getElementById(timeId).textContent = `${ms}ms`;
+      setStatus(statusId, res.status);
+      let data;
+      try { data = await res.json(); } catch(_) { data = await res.text(); }
+      const pretty = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+      respEl.innerHTML = syntaxHighlight(pretty);
+    } catch(err) {
+      setStatus(statusId, 0);
+      respEl.innerHTML = `<span class="json-null">// Error de red: ${err.message}\n// ¿Está la API activa? Puede tardar ~30s en despertar.</span>`;
+    }
+    btn.disabled = false; btn.textContent = '▶ Enviar';
+  }
+
+  async function pgSendGet(url, respId, statusId, timeId) {
+    const btn = event.currentTarget;
+    btn.disabled = true; btn.textContent = '⏳ Cargando...';
+    const respEl = document.getElementById(respId);
+    respEl.innerHTML = '// Esperando respuesta...';
+    const t0 = performance.now();
+    try {
+      const res = await fetch(url);
+      const ms = Math.round(performance.now() - t0);
+      document.getElementById(timeId).textContent = `${ms}ms`;
+      setStatus(statusId, res.status);
+      let data;
+      try { data = await res.json(); } catch(_) { data = await res.text(); }
+      const pretty = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+      respEl.innerHTML = syntaxHighlight(pretty);
+    } catch(err) {
+      setStatus(statusId, 0);
+      respEl.innerHTML = `<span class="json-null">// Error de red: ${err.message}\n// ¿Está la API activa? Puede tardar ~30s en despertar.</span>`;
+    }
+    btn.disabled = false; btn.textContent = '▶ Ejecutar';
+  }
+
+  async function pgSendGetId() {
+    const id = document.getElementById('input-get-id').value.trim();
+    if (!id) { document.getElementById('resp-get-id').innerHTML = '<span class="json-null">// Ingresa un ID primero.</span>'; return; }
+    await pgSendGet(`https://encuesta-api-production-9316.up.railway.app/encuestas/${id}`, 'resp-get-id', 'status-get-id', 'time-get-id');
+  }
+
+  async function pgSendDelete() {
+    const id = document.getElementById('input-delete-id').value.trim();
+    const btn = event.currentTarget;
+    const respEl = document.getElementById('resp-delete-id');
+    if (!id) { respEl.innerHTML = '<span class="json-null">// Ingresa un ID primero.</span>'; return; }
+    btn.disabled = true; btn.textContent = '⏳ Eliminando...';
+    respEl.innerHTML = '// Esperando respuesta...';
+    const t0 = performance.now();
+    try {
+      const res = await fetch(`https://encuesta-api-production-9316.up.railway.app/encuestas/${id}`, { method: 'DELETE' });
+      const ms = Math.round(performance.now() - t0);
+      document.getElementById('time-delete-id').textContent = `${ms}ms`;
+      setStatus('status-delete-id', res.status);
+      if (res.status === 204) {
+        respEl.innerHTML = '<span class="json-bool">// 204 No Content — Eliminada exitosamente.</span>';
+      } else {
+        let data; try { data = await res.json(); } catch(_) { data = await res.text(); }
+        const pretty = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        respEl.innerHTML = syntaxHighlight(pretty);
+      }
+    } catch(err) {
+      setStatus('status-delete-id', 0);
+      respEl.innerHTML = `<span class="json-null">// Error de red: ${err.message}</span>`;
+    }
+    btn.disabled = false; btn.textContent = '▶ Eliminar';
+  }
+
+  function pgClear(respId, statusId, timeId) {
+    document.getElementById(respId).innerHTML = '// La respuesta aparecerá aquí...';
+    setStatus(statusId, null);
+    document.getElementById(timeId).textContent = '';
+  }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
